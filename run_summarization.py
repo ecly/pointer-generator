@@ -33,6 +33,7 @@ FLAGS = tf.app.flags.FLAGS
 
 # Add option to run on preprocessed newsroom data
 tf.app.flags.DEFINE_string('is_newsroom', False, 'Option for training on newsroom data. --data_path will expected a preprocssed datafile.')
+tf.app.flags.DEFINE_integer('max_steps', 100_000, 'maximum steps taken by training loop. Will break after given amount.')
 
 
 # Where to find data
@@ -216,9 +217,12 @@ def run_training(model, batcher, sess_context_manager, sv, summary_writer):
       train_step = results['global_step'] # we need this to update our running average loss
 
       summary_writer.add_summary(summaries, train_step) # write the summaries
+      print("training step %d" % train_step)
       if train_step % 100 == 0: # flush the summary writer every so often
         summary_writer.flush()
 
+      if train_step >= FLAGS.max_steps:
+          break
 
 
 def run_eval(model, batcher, vocab):
