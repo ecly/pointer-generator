@@ -31,6 +31,10 @@ from tensorflow.python import debug as tf_debug
 
 FLAGS = tf.app.flags.FLAGS
 
+# Add option to run on preprocessed newsroom data
+tf.app.flags.DEFINE_string('is_newsroom', False, 'Option for training on newsroom data. --data_path will expected a preprocssed datafile.')
+
+
 # Where to find data
 tf.app.flags.DEFINE_string('data_path', '', 'Path expression to tf.Example datafiles. Can include wildcards to access multiple datafiles.')
 tf.app.flags.DEFINE_string('vocab_path', '', 'Path expression to text vocabulary file.')
@@ -216,6 +220,7 @@ def run_training(model, batcher, sess_context_manager, sv, summary_writer):
         summary_writer.flush()
 
 
+
 def run_eval(model, batcher, vocab):
   """Repeatedly runs eval iterations, logging to screen and writing summaries. Saves the model with the best loss seen so far."""
   model.build_graph() # build the graph
@@ -263,7 +268,6 @@ def run_eval(model, batcher, vocab):
     if train_step % 100 == 0:
       summary_writer.flush()
 
-
 def main(unused_argv):
   if len(unused_argv) != 1: # prints a message if you've entered flags incorrectly
     raise Exception("Problem with flags: %s" % unused_argv)
@@ -300,7 +304,7 @@ def main(unused_argv):
   hps = namedtuple("HParams", hps_dict.keys())(**hps_dict)
 
   # Create a batcher object that will create minibatches of data
-  batcher = Batcher(FLAGS.data_path, vocab, hps, single_pass=FLAGS.single_pass)
+  batcher = Batcher(FLAGS.data_path, vocab, hps, FLAGS.single_pass, FLAGS.is_newsroom)
 
   tf.set_random_seed(111) # a seed value for randomness
 

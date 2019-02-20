@@ -16,6 +16,7 @@
 
 """This file contains code to read the train/eval/test data from file and process it, and read the vocab data from file and process it"""
 
+import pdb
 import glob
 import random
 import struct
@@ -103,6 +104,17 @@ class Vocab(object):
       writer = csv.DictWriter(f, delimiter="\t", fieldnames=fieldnames)
       for i in range(self.size()):
         writer.writerow({"word": self._id_to_word[i]})
+
+def example_generator_newsroom(data_path, single_pass):
+  """
+  A generator for newsroom.
+  This should be used together with the newsroom text generator.
+  """
+  while True:
+      with open(data_path, "r") as inp:
+        for line in inp:
+          body, summary = line.split("\t")
+          yield (body, summary)
 
 
 def example_generator(data_path, single_pass):

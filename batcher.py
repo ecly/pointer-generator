@@ -16,6 +16,7 @@
 
 """This file contains code to process data into batches"""
 
+import pdb
 import queue as Queue
 from random import shuffle
 from threading import Thread
@@ -219,7 +220,7 @@ class Batcher(object):
 
   BATCH_QUEUE_MAX = 100 # max number of batches the batch_queue can hold
 
-  def __init__(self, data_path, vocab, hps, single_pass):
+  def __init__(self, data_path, vocab, hps, single_pass, is_newsroom):
     """Initialize the batcher. Start threads that process the data into batches.
 
     Args:
@@ -232,6 +233,7 @@ class Batcher(object):
     self._vocab = vocab
     self._hps = hps
     self._single_pass = single_pass
+    self._is_newsroom = is_newsroom
 
     # Initialize a queue of Batches waiting to be used, and a queue of Examples waiting to be batched
     self._batch_queue = Queue.Queue(self.BATCH_QUEUE_MAX)
@@ -288,7 +290,12 @@ class Batcher(object):
   def fill_example_queue(self):
     """Reads data from file and processes into Examples which are then placed into the example queue."""
 
-    input_gen = self.text_generator(data.example_generator(self._data_path, self._single_pass))
+    if self._is_newsroom:
+        print("Newsroom data configuration for batcher")
+        input_gen = self.text_generator_newsroom(data.example_generator_newsroom(self._data_path, self._single_pass))
+    else:
+        print("CNNDM data configuration for batcher")
+        input_gen = self.text_generator(data.example_generator(self._data_path, self._single_pass))
 
     while True:
       try:
@@ -354,6 +361,23 @@ class Batcher(object):
           new_t.daemon = True
           new_t.start()
 
+  def text_generator_newsroom(self, example_generator):
+    """
+    Generates article and abstract text from tuples.
+    Expectes the generator to be the newsroom version.
+    """
+    while True:
+      e = next(example_generator) # e is a tf.Example
+      try:
+        article_text = e[0]
+        abstract_text = e[1]
+      except ValueError:
+        tf.logging.error('Failed to get article or abstract from example')
+        continue
+      if len(article_text)==0: # See https://github.com/abisee/pointer-generator/issues/1
+        tf.logging.warning('Found an example with empty article text. Skipping it.')
+      else:
+        yield (article_text, abstract_text)
 
   def text_generator(self, example_generator):
     """Generates article and abstract text from tf.Example.
