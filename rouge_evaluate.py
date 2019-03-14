@@ -5,6 +5,18 @@ import math
 
 from rouge import Rouge
 
+def get_evaluator():
+    """Get the Rouge evaluator mimicing 1.55"""
+    return Rouge(
+        metrics=["rouge-n", "rouge-l"],
+        max_n=2,
+        limit_length=False,
+        apply_avg=True,
+        alpha=0.5,  # Default F1_score
+        stemming=True,
+    )
+
+
 def print_scores(scores):
     """
     Pretty print rouge scores to stdout
@@ -39,8 +51,8 @@ def rouge_evaluate(ref_folder, hyp_folder, limit=math.inf):
                 references.append(ref)
                 hypothesis.append(hyp)
 
-    rouge = Rouge()
-    return rouge.get_scores(hypothesis, references, avg=True)
+    rouge = get_evaluator()
+    return rouge.get_scores(hypothesis, references)
 
 
 def main():
