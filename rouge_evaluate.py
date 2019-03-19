@@ -59,7 +59,7 @@ def main():
     """Run evaluation given <ref_folder> <hyp_folder> (<limit>)"""
     ref_folder = sys.argv[1]
     hyp_folder = sys.argv[2]
-    limit = int(sys.argv[3]) if len(sys.argv) == 4 else math.inf
+    limit = int(sys.argv[3]) if len(sys.argv) == 4 else sys.maxsize
     scores = rouge_evaluate(ref_folder, hyp_folder, limit)
     print_scores(scores)
 
