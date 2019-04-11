@@ -30,6 +30,7 @@ import util
 from tensorflow.python import debug as tf_debug
 
 FLAGS = tf.app.flags.FLAGS
+tf.app.flags.DEFINE_integer('iterations', 230_000, 'maximum steps taken by training loop. Will break after given amount.')
 
 # Where to find data
 tf.app.flags.DEFINE_string('data_path', '', 'Path expression to tf.Example datafiles. Can include wildcards to access multiple datafiles.')
@@ -214,6 +215,9 @@ def run_training(model, batcher, sess_context_manager, sv, summary_writer):
       summary_writer.add_summary(summaries, train_step) # write the summaries
       if train_step % 100 == 0: # flush the summary writer every so often
         summary_writer.flush()
+
+      if train_step >= FLAGS.iterations:
+          break
 
 
 def run_eval(model, batcher, vocab):
