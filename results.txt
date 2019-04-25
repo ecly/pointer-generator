@@ -1,0 +1,54 @@
+# Pointer Generator (230000 iterations)
+## pyrouge
+ROUGE-1: Precision: 37.80
+         Recall: 37.74
+         F1: 36.61
+
+ROUGE-2: Precision: 16.52
+         Recall: 16.38
+         F1: 15.93
+
+ROUGE-L: Precision: 34.70
+         Recall: 34.62
+         F1: 33.60
+
+## py-rouge
+ROUGE-1: Precision: 38.07
+         Recall: 38.02
+         F1: 36.87
+
+ROUGE-2: Precision: 16.57
+         Recall: 16.44
+         F1: 15.98
+
+ROUGE-L: Precision: 34.91
+         Recall: 34.83
+         F1: 33.80
+
+# Pointer Generator + Coverage (230000 + 3000 iterations)
+## pyrouge
+ROUGE-1: Precision: 38.70
+         Recall: 42.26
+         F1: 39.10
+
+ROUGE-2: Precision: 17.06
+         Recall: 18.44
+         F1: 17.13
+
+ROUGE-L: Precision: 35.68
+         Recall: 38.89
+         F1: 36.02
+
+## py-rouge
+ROUGE-1: Precision: 38.98
+         Recall: 42.56
+         F1: 39.39
+
+ROUGE-2: Precision: 17.12
+         Recall: 18.51
+         F1: 17.19
+
+ROUGE-L: Precision: 35.90
+         Recall: 39.13
+         F1: 36.24
+
